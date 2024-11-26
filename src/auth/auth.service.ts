@@ -29,8 +29,13 @@ export class AuthService {
     return tokens;
   }
 
+  async logout(id: string): Promise<User> {
+    return await this.usersService.update(id, { refreshToken: null });
+  }
+
   async getTokens(user: User): Promise<JwtTokens> {
     const payload = {
+      sub: user.id,
       email: user.email,
       role: user.role,
     };

@@ -25,6 +25,10 @@ export class User {
 
   @Prop()
   refreshToken: string;
+
+  get id(): string {
+    return this['_id'].toString();
+  }
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
