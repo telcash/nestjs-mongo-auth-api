@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { HashService } from 'src/common/services/hash.service';
 import { User } from 'src/users/schemas/user.schema';
@@ -55,5 +55,23 @@ export class AuthService {
       }),
     ]);
     return { accessToken, refreshToken };
+  }
+
+  async refreshTokens(id: string, refreshToken: string): Promise<JwtTokens> {
+    const user = await this.usersService.findOne(id);
+    if (
+      !user.refreshToken ||
+      !(await this.hashService.compareData(refreshToken, user.refreshToken))
+    ) {
+      throw new ForbiddenException('Access denied');
+    }
+    const tokens: JwtTokens = await this.getTokens(user);
+    await this.updateRefreshToken(id, tokens.refreshToken);
+    return tokens;
+  }
+
+  async updateRefreshToken(id: string, refreshToken: string) {
+    const hashedRefreshToken = await this.hashService.hashData(refreshToken);
+    await this.usersService.update(id, { refreshToken: hashedRefreshToken });
   }
 }

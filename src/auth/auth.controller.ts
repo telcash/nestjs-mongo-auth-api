@@ -1,6 +1,6 @@
-import { Controller, Post, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { User as UserDecorator } from 'src/users/decorators/user.decorator';
+import { UserDecorator } from 'src/users/decorators/user.decorator';
 import { JwtTokens } from './types/jwt-tokens.type';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { JwtAccessGuard } from './guards/jwt-access.guard';
@@ -20,5 +20,14 @@ export class AuthController {
   @Post('logout')
   async logout(@UserDecorator('sub') id: string): Promise<User> {
     return await this.authService.logout(id);
+  }
+
+  @UseGuards(JwtAccessGuard)
+  @Get('refresh')
+  async refreshTokens(
+    @UserDecorator('sub') id,
+    @UserDecorator('refreshToken') refreshToken,
+  ): Promise<JwtTokens> {
+    return await this.authService.refreshTokens(id, refreshToken);
   }
 }
