@@ -1,1 +1,10 @@
-export class CreateUserDto {}
+import { UserRole } from '../types/user-role';
+
+export class CreateUserDto {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  role: UserRole;
+  refreshToken: string;
+}

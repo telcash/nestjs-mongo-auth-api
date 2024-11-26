@@ -5,6 +5,7 @@ import { User } from 'src/users/schemas/user.schema';
 import { UsersService } from 'src/users/users.service';
 import { JwtTokens } from './types/jwt-tokens.type';
 import { JwtService } from '@nestjs/jwt';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -22,6 +23,10 @@ export class AuthService {
       return user;
     }
     return null;
+  }
+
+  async signup(createUserDto: CreateUserDto): Promise<User> {
+    return await this.usersService.create(createUserDto);
   }
 
   async login(user: User): Promise<JwtTokens> {
@@ -48,9 +53,9 @@ export class AuthService {
         ),
       }),
       this.jwtService.signAsync(payload, {
-        secret: this.configService.get<string>('JWT_REFRESH TOKEN_SECRET'),
+        secret: this.configService.get<string>('JWT_REFRESH_TOKEN_SECRET'),
         expiresIn: this.configService.get<string>(
-          'JWT_REFRESH  TOKEN_EXPIRATION_TIME',
+          'JWT_REFRESH_TOKEN_EXPIRATION_TIME',
         ),
       }),
     ]);
