@@ -51,6 +51,18 @@ export class UsersController {
     });
   }
 
+  @Patch('profile')
+  async updateProfile(
+    @UserDecorator('sub') id: string,
+    @Body() updateUserDto: UpdateUserDto,
+  ): Promise<User | null> {
+    return plainToInstance(
+      User,
+      await this.usersService.update(id, updateUserDto),
+      { excludeExtraneousValues: true },
+    );
+  }
+
   @UseGuards(RoleGuard)
   @Roles(UserRole.ADMIN)
   @Get(':id')
