@@ -8,6 +8,7 @@ import { User } from 'src/users/schemas/user.schema';
 import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
 import { SignupPipe } from './pipes/signup.pipe';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { plainToInstance } from 'class-transformer';
 
 @Controller('auth')
 export class AuthController {
@@ -15,7 +16,9 @@ export class AuthController {
 
   @Post('signup')
   async signup(@Body(SignupPipe) createUserDto: CreateUserDto): Promise<User> {
-    return await this.authService.signup(createUserDto);
+    return plainToInstance(User, await this.authService.signup(createUserDto), {
+      excludeExtraneousValues: true,
+    });
   }
 
   @UseGuards(LocalAuthGuard)
@@ -27,7 +30,9 @@ export class AuthController {
   @UseGuards(JwtAccessGuard)
   @Post('logout')
   async logout(@UserDecorator('sub') id: string): Promise<User> {
-    return await this.authService.logout(id);
+    return plainToInstance(User, await this.authService.logout(id), {
+      excludeExtraneousValues: true,
+    });
   }
 
   @UseGuards(JwtRefreshGuard)

@@ -17,6 +17,7 @@ import { UserRole } from './types/user-role';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { JwtAccessGuard } from 'src/auth/guards/jwt-access.guard';
 import { plainToInstance } from 'class-transformer';
+import { UserDecorator } from './decorators/user.decorator';
 
 @UseGuards(JwtAccessGuard)
 @Controller('users')
@@ -39,6 +40,13 @@ export class UsersController {
   @Get()
   async findAll(): Promise<User[]> {
     return plainToInstance(User, await this.usersService.findAll(), {
+      excludeExtraneousValues: true,
+    });
+  }
+
+  @Get('profile')
+  async findProfile(@UserDecorator('sub') id: string): Promise<User | null> {
+    return plainToInstance(User, await this.usersService.findOne(id), {
       excludeExtraneousValues: true,
     });
   }
