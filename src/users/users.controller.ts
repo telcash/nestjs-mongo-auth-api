@@ -15,7 +15,10 @@ import { User } from './schemas/user.schema';
 import { RoleGuard } from 'src/auth/guards/role.guard';
 import { UserRole } from './types/user-role';
 import { Roles } from 'src/auth/decorators/roles.decorator';
+import { JwtAccessGuard } from 'src/auth/guards/jwt-access.guard';
+import { plainToInstance } from 'class-transformer';
 
+@UseGuards(JwtAccessGuard)
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
@@ -24,21 +27,29 @@ export class UsersController {
   @Roles(UserRole.ADMIN)
   @Post()
   async create(@Body() createUserDto: CreateUserDto): Promise<User> {
-    return await this.usersService.create(createUserDto);
+    return plainToInstance(
+      User,
+      await this.usersService.create(createUserDto),
+      { excludeExtraneousValues: true },
+    );
   }
 
   @UseGuards(RoleGuard)
   @Roles(UserRole.ADMIN)
   @Get()
   async findAll(): Promise<User[]> {
-    return await this.usersService.findAll();
+    return plainToInstance(User, await this.usersService.findAll(), {
+      excludeExtraneousValues: true,
+    });
   }
 
   @UseGuards(RoleGuard)
   @Roles(UserRole.ADMIN)
   @Get(':id')
   async findOne(@Param('id') id: string): Promise<User | null> {
-    return await this.usersService.findOne(id);
+    return plainToInstance(User, await this.usersService.findOne(id), {
+      excludeExtraneousValues: true,
+    });
   }
 
   @UseGuards(RoleGuard)
@@ -48,13 +59,19 @@ export class UsersController {
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<User | null> {
-    return await this.usersService.update(id, updateUserDto);
+    return plainToInstance(
+      User,
+      await this.usersService.update(id, updateUserDto),
+      { excludeExtraneousValues: true },
+    );
   }
 
   @UseGuards(RoleGuard)
   @Roles(UserRole.ADMIN)
   @Delete(':id')
   async remove(@Param('id') id: string): Promise<User | null> {
-    return await this.usersService.remove(id);
+    return plainToInstance(User, await this.usersService.remove(id), {
+      excludeExtraneousValues: true,
+    });
   }
 }

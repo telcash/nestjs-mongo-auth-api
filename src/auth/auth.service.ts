@@ -40,7 +40,7 @@ export class AuthService {
 
   async getTokens(user: User): Promise<JwtTokens> {
     const payload = {
-      sub: user.id,
+      sub: user._id,
       email: user.email,
       role: user.role,
     };
