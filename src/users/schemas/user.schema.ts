@@ -8,7 +8,7 @@ export type UserDocument = HydratedDocument<User>;
 @Schema()
 export class User {
   @Expose()
-  _id: string;
+  id: string;
 
   @Prop({ required: true })
   @Expose()

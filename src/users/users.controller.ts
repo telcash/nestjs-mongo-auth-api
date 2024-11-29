@@ -59,8 +59,17 @@ export class UsersController {
     return plainToInstance(
       User,
       await this.usersService.update(id, updateUserDto),
-      { excludeExtraneousValues: true },
+      {
+        excludeExtraneousValues: true,
+      },
     );
+  }
+
+  @Delete('profile')
+  async removeProfile(@UserDecorator('sub') id: string): Promise<User | null> {
+    return plainToInstance(User, await this.usersService.remove(id), {
+      excludeExtraneousValues: true,
+    });
   }
 
   @UseGuards(RoleGuard)
