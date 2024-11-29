@@ -38,8 +38,8 @@ export class AuthController {
   @UseGuards(JwtRefreshGuard)
   @Get('refresh')
   async refreshTokens(
-    @UserDecorator('sub') id,
-    @UserDecorator('refreshToken') refreshToken,
+    @UserDecorator('sub') id: string,
+    @UserDecorator('refreshToken') refreshToken: string,
   ): Promise<JwtTokens> {
     return await this.authService.refreshTokens(id, refreshToken);
   }
