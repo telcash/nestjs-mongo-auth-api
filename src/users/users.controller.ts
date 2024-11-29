@@ -18,6 +18,7 @@ import { Roles } from 'src/auth/decorators/roles.decorator';
 import { JwtAccessGuard } from 'src/auth/guards/jwt-access.guard';
 import { plainToInstance } from 'class-transformer';
 import { UserDecorator } from './decorators/user.decorator';
+import { RoleUpdatePipe } from './pipes/role-update.pipe';
 
 @UseGuards(JwtAccessGuard)
 @Controller('users')
@@ -54,7 +55,7 @@ export class UsersController {
   @Patch('profile')
   async updateProfile(
     @UserDecorator('sub') id: string,
-    @Body() updateUserDto: UpdateUserDto,
+    @Body(RoleUpdatePipe) updateUserDto: UpdateUserDto,
   ): Promise<User | null> {
     return plainToInstance(
       User,
